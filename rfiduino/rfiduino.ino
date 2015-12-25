@@ -51,7 +51,7 @@ byte tagData[5]; //Holds the ID numbers from the tag
 void setup()
 {
   //begin serial communicatons at 9600 baud and print a startup message
-  SERIAL_PORT.begin(9600);
+  SERIAL_PORT.begin(115200);
   SERIAL_PORT.println("Welcome to the RFIDuino Serial Example. Please swipe your RFID Tag.");
 
   //The RFIDUINO hardware pins and user outputs(Buzzer / LEDS) are all initialized via pinMode() in the library initialization, so you don not need to to that manually
@@ -75,9 +75,9 @@ void loop()
     SERIAL_PORT.print("\n\r");//return character for next line
              
     digitalWrite(myRFIDuino.led2,HIGH);     //turn green LED on
-    digitalWrite(myRFIDuino.buzzer, HIGH);   //turn the buzzer on
+    //digitalWrite(myRFIDuino.buzzer, HIGH);   //turn the buzzer on
     delay(1000);                             //wait for 1 second
-    digitalWrite(myRFIDuino.buzzer, LOW);    //turn the buzzer off
+    //digitalWrite(myRFIDuino.buzzer, LOW);    //turn the buzzer off
     digitalWrite(myRFIDuino.led2,LOW);      //turn the green LED off
 
 

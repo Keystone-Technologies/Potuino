@@ -1,6 +1,4 @@
 /*************************************************** 
-  This is an example for the Adafruit CC3000 Wifi Breakout & Shield
-
   Designed specifically to work with the Adafruit WiFi products:
   ----> https://www.adafruit.com/products/1469
 
@@ -13,7 +11,9 @@
   
   Modified by Peter Dalmaris tas part of Udemy's Arduino step by
   Step course and modified again by One of Peter's students.
+	
  ****************************************************/
+ 
 #include <RFIDuino.h>
 #include <Adafruit_CC3000.h>
 #include <ccspi.h>
@@ -21,12 +21,12 @@
 #include <string.h>
 #include "utility/debug.h"
 
-#define WLAN_SSID "XXXXXXXXXXXXX"   // Use your own network here           
-#define WLAN_PASS "XXXXXXXXXXXXX"
+#define WLAN_SSID "XXXXXXXXXX"   // Use your own network here           
+#define WLAN_PASS "XXXXXXXXXX"
 
-#define WEBSITE   "localhost"   // Use your website and webpage here, doesn't seem to like an IP here
+#define WEBSITE   ""   // Use your website and webpage here, doesn't seem to like an IP here
 //#define WEBSITEIP IPAddress(192,168,0,102)   // Use your website and webpage here, doesn't seem to like an IP here
-#define WEBPORT   3000
+#define WEBPORT   80
 #define WEBPAGE   "/"               // It's basically a file with "led8=1\n" as the only content
 
 #define ADAFRUIT_CC3000_IRQ   3                     
@@ -102,11 +102,20 @@ void loop(void)
     tag[2]=(char)tagData[2];
     tag[3]=(char)tagData[3];
     tag[4]=(char)tagData[4];
-    txInput(tag);
+		for(int n=0;n<5;n++)
+    {
+      Serial.print(tagData[n],DEC);  //print the byte in Decimal format
+      if(n<4)//only print the comma on the first 4 nunbers
+      {
+        Serial.print(",");
+      }
+    }
+		Serial.print("\n\r");//return character for next line
+    //txInput(tag);
     digitalWrite(myRFIDuino.led2,HIGH);     //turn green LED on
-    digitalWrite(myRFIDuino.buzzer, HIGH);   //turn the buzzer on
+    //digitalWrite(myRFIDuino.buzzer, HIGH);   //turn the buzzer on
     delay(250);                             //wait for 1 second
-    digitalWrite(myRFIDuino.buzzer, LOW);    //turn the buzzer off
+    //digitalWrite(myRFIDuino.buzzer, LOW);    //turn the buzzer off
     digitalWrite(myRFIDuino.led2,LOW);      //turn the green LED off
   }
 }
