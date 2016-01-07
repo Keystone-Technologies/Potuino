@@ -21,13 +21,13 @@
 #include <string.h>
 #include "utility/debug.h"
 
-#define WLAN_SSID "XXXXXXXXXX"   // Use your own network here           
-#define WLAN_PASS "XXXXXXXXXX"
+#define WLAN_SSID "XXXXX"   // Use your own network here           
+#define WLAN_PASS "XXXXX"
 
-#define WEBSITE   ""   // Use your website and webpage here, doesn't seem to like an IP here
-//#define WEBSITEIP IPAddress(192,168,0,102)   // Use your website and webpage here, doesn't seem to like an IP here
+#define WEBSITE   "dorpinghaus.com"   // Use your website and webpage here, doesn't seem to like an IP here
+//#define WEBSITEIP IPAddress(54,231,17,252)
 #define WEBPORT   80
-#define WEBPAGE   "/"               // It's basically a file with "led8=1\n" as the only content
+#define WEBPAGE   "/arduino.html"               // It's basically a file with "led8=1\n" as the only content
 
 #define ADAFRUIT_CC3000_IRQ   3                     
 #define ADAFRUIT_CC3000_VBAT  5
@@ -75,6 +75,7 @@ void setup(void)
   }
   
   Serial.println("Connected!");
+	myRFIDuino.successSound();
   
   Serial.println("Request DHCP");
   while (!cc3000.checkDHCP())
@@ -95,6 +96,11 @@ void loop(void)
   //scan for a tag - if a tag is sucesfully scanned, return a 'true' and proceed
   if(myRFIDuino.scanForTag(tagData) == true)
   {
+		digitalWrite(myRFIDuino.led2,HIGH);     //turn green LED on
+    digitalWrite(myRFIDuino.buzzer, HIGH);   //turn the buzzer on
+    delay(250);                             //wait for 1 second
+    digitalWrite(myRFIDuino.buzzer, LOW);    //turn the buzzer off
+    digitalWrite(myRFIDuino.led2,LOW);      //turn the green LED off
     Serial.print("RFID Tag ID:"); //print a header to the Serial port.
     char *tag;
     tag[0]=(char)tagData[0];
@@ -111,12 +117,7 @@ void loop(void)
       }
     }
 		Serial.print("\n\r");//return character for next line
-    //txInput(tag);
-    digitalWrite(myRFIDuino.led2,HIGH);     //turn green LED on
-    //digitalWrite(myRFIDuino.buzzer, HIGH);   //turn the buzzer on
-    delay(250);                             //wait for 1 second
-    //digitalWrite(myRFIDuino.buzzer, LOW);    //turn the buzzer off
-    digitalWrite(myRFIDuino.led2,LOW);      //turn the green LED off
+    txInput(tag);
   }
 }
 
@@ -171,11 +172,11 @@ void txInput (char *str)
   } 
   else 
   {
-    Serial.println(F("Connection failed"));    
+    Serial.println(F("\nConnection failed"));    
     return;
   }
 
-  Serial.println(F("---------------------------------------------"));
+  Serial.println(F("\n---------------------------------------------"));
   Serial.println(F("HTTP Response:"));
   
   unsigned long lastRead = millis();
@@ -259,8 +260,11 @@ String parseGetRequest (String &str)
   int led_index = str.indexOf ("led");
   int led_pin = str [led_index + 3] - '0';
   int led_val = str [led_index + 5] - '0';
+	if ((led_pin == 8) && (led_val == 1)){
+		digitalWrite(myRFIDuino.led1, HIGH);
+	}
   //executeInstruction (led_pin, led_val);
-  executeInstruction (13, led_val); // Code above looks to pull just one character for the pin
+  //executeInstruction (13, led_val); // Code above looks to pull just one character for the pin
 }
 
 void executeInstruction (int pin, int val)
