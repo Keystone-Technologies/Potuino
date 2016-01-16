@@ -21,13 +21,13 @@
 #include <string.h>
 #include "utility/debug.h"
 
-#define WLAN_SSID "XXXXX"   // Use your own network here           
-#define WLAN_PASS "XXXXX"
+#define WLAN_SSID "Keystone-Tech"             
+#define WLAN_PASS "ilovewireless"
 
-#define WEBSITE   "dorpinghaus.com"   // Use your website and webpage here, doesn't seem to like an IP here
-//#define WEBSITEIP IPAddress(54,231,17,252)
+#define WEBSITE   "potuinoserver-jdorpinghaus.c9users.io"   //Doesn't like an IP here
+//#define WEBSITEIP IPAddress(172,16,100,186)
 #define WEBPORT   80
-#define WEBPAGE   "/arduino.html"               // It's basically a file with "led8=1\n" as the only content
+#define WEBPAGE   "/"               //A file with "led8=1\n" as the only content
 
 #define ADAFRUIT_CC3000_IRQ   3                     
 #define ADAFRUIT_CC3000_VBAT  5
@@ -158,15 +158,19 @@ void txInput (char *str)
     Serial.print(F("\r\n"));
     Serial.println();
     boolean sentContent = false;
-    www.fastrprint(F("GET "));
+    www.fastrprint(F("POST "));
     www.fastrprint(WEBPAGE);
-    www.fastrprint(F("?"));
-    www.fastrprint(str);
     www.fastrprint(F(" HTTP/1.1\r\n"));
     www.fastrprint(F("Host: ")); 
     www.fastrprint(WEBSITE); 
     www.fastrprint(F("\r\n"));
+		www.fastrprint(F("Accept: */*\r\n"));
+		www.fastrprint(F("User-Agent: Potuino\r\n"));
+		www.fastrprint(F("Accept-Encoding: gzip, deflate\r\n"));
+		www.fastrprint(F("Content-Length: 14\r\n")); //IMPORTANT
+		www.fastrprint(F("Content-Type: application/json\r\n"));
     www.fastrprint(F("\r\n"));
+		www.fastrprint(F("{\"RFID\":\"100\"}"));
     www.println();
     Serial.println(F("Request sent"));
   } 

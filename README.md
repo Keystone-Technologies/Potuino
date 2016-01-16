@@ -5,3 +5,14 @@ working together: to be able to both read RFID data and send that data via
 HTTP using wireless.
 
 Additional expectations of potuino will be documented here.
+
+##To Do
+- [x] Remap board pins
+- [x] Send POST request to NodeJS server
+- [ ] Dynamically update Content-Length header
+- [ ] Clean up wiring
+- [ ] Convert RFID tag number from byte array 
+- [ ] Make RFID scanner loop
+- [ ] Send RFID tag with POST request
+- [ ] Respond from server with JSON
+
