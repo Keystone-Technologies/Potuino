@@ -21,8 +21,8 @@
 #include <string.h>
 #include "utility/debug.h"
 
-#define WLAN_SSID "Keystone-Tech"             
-#define WLAN_PASS "ilovewireless"
+#define WLAN_SSID "XXXXX"             
+#define WLAN_PASS "XXXXX"
 
 #define WEBSITE   "potuinoserver-jdorpinghaus.c9users.io"   //Doesn't like an IP here
 //#define WEBSITEIP IPAddress(172,16,100,186)
@@ -46,7 +46,8 @@ Adafruit_CC3000_Client www;
 
 RFIDuino myRFIDuino(1.2);   //initialize an RFIDuino object for hardware version 1.2
 
-byte tagData[5]; //Holds the ID numbers from the tag  
+byte tagData[5]; //Holds the ID numbers from the tag
+char id[50] = {0};  
 int connectTimeout = 3000;
 int repeat_counter = 0;  
 
@@ -54,7 +55,8 @@ void setup(void)
 {
 
   Serial.begin (115200);
-  Serial.println ("Hello, CC3000!\n"); 
+  Serial.println ("Hello, CC3000!\n");
+	Serial.print(id);
   Serial.print ("Free RAM: "); 
   Serial.println (getFreeRam(), DEC);
   Serial.println ("\nInitializing...");
@@ -86,9 +88,7 @@ void setup(void)
   {
     delay(1000);
   }
-  
   Serial.println("Welcome to the RFIDuino Serial Example. Please swipe your RFID Tag.");
-  
 }
 
 void loop(void)
@@ -102,12 +102,6 @@ void loop(void)
     digitalWrite(myRFIDuino.buzzer, LOW);    //turn the buzzer off
     digitalWrite(myRFIDuino.led2,LOW);      //turn the green LED off
     Serial.print("RFID Tag ID:"); //print a header to the Serial port.
-    char *tag;
-    tag[0]=(char)tagData[0];
-    tag[1]=(char)tagData[1];
-    tag[2]=(char)tagData[2];
-    tag[3]=(char)tagData[3];
-    tag[4]=(char)tagData[4];
 		for(int n=0;n<5;n++)
     {
       Serial.print(tagData[n],DEC);  //print the byte in Decimal format
@@ -117,11 +111,14 @@ void loop(void)
       }
     }
 		Serial.print("\n\r");//return character for next line
-    txInput(tag);
+    txInput();
+		
+		format_tag(tagData);
+		
   }
 }
 
-void txInput (char *str)
+void txInput()
 {
   #ifdef WEBSITEIP
   ip = WEBSITEIP;
@@ -145,17 +142,21 @@ void txInput (char *str)
   
   if (www.connected()) 
   {
-    Serial.println();
-    Serial.println(F("HTTP Request:"));
-    Serial.print(F("GET "));
+    Serial.print("POST ");
     Serial.print(WEBPAGE);
-    Serial.print(F("?"));
-    Serial.print(str);
-    Serial.print(F(" HTTP/1.1\r\n"));
-    Serial.print(F("Host: ")); 
+    Serial.print(" HTTP/1.1\r\n");
+    Serial.print("Host: "); 
     Serial.print(WEBSITE); 
-    Serial.print(F("\r\n"));
-    Serial.print(F("\r\n"));
+    Serial.print("\r\n");
+		Serial.print("Accept: */*\r\n");
+		Serial.print("User-Agent: Potuino\r\n");
+		Serial.print("Accept-Encoding: gzip, deflate\r\n");
+		Serial.print("Content-Length: 26\r\n"); //IMPORTANT
+		Serial.print("Content-Type: application/json\r\n");
+    Serial.print("\r\n");
+		Serial.print("{\"RFID\":\"");
+		Serial.print(id);
+		Serial.print("\"}");
     Serial.println();
     boolean sentContent = false;
     www.fastrprint(F("POST "));
@@ -167,10 +168,12 @@ void txInput (char *str)
 		www.fastrprint(F("Accept: */*\r\n"));
 		www.fastrprint(F("User-Agent: Potuino\r\n"));
 		www.fastrprint(F("Accept-Encoding: gzip, deflate\r\n"));
-		www.fastrprint(F("Content-Length: 14\r\n")); //IMPORTANT
+		www.fastrprint(F("Content-Length: 26\r\n")); //IMPORTANT
 		www.fastrprint(F("Content-Type: application/json\r\n"));
     www.fastrprint(F("\r\n"));
-		www.fastrprint(F("{\"RFID\":\"100\"}"));
+		www.fastrprint(F("{\"RFID\":\""));
+		www.fastrprint(id);
+		www.fastrprint(F("\"}"));
     www.println();
     Serial.println(F("Request sent"));
   } 
@@ -234,6 +237,54 @@ void txInput (char *str)
    cc3000.disconnect();
    Serial.println(F("\n\nDisconnecting"));
    delay(3000);  
+}
+
+int binary_decimal(int n) /* Function to convert binary to decimal.*/
+{
+    int decimal=0, i=0, rem;
+    while (n!=0)
+    {
+        rem = n%10;
+        n/=10;
+        decimal += rem*pow(2,i);
+        ++i;
+    }
+    return decimal;
+}
+
+void format_tag(byte array[]){
+	int i, temp;
+	for (i = 0; i < 20; i++){
+		id[i] = 0;
+	}
+	char temp1, temp2, temp3;
+	for (i = 0; i < 5; i++){
+		if(array[i] < 100){
+			if(array[i] < 10){
+				id[(i * 4)] = '0';
+				id[(i * 4) + 1] = '0';
+				id[(i * 4) + 2] = (array[i] + '0');
+			}
+			else {
+				temp = array[i];
+				id[(i * 4)] = '0';
+				id[(i * 4) + 2] = (temp % 10) + '0';
+				temp /= 10;
+				id[(i * 4) + 1] = (temp % 10) + '0';
+			} 
+		}
+		else {
+			temp = array[i];
+			id[(i * 4) + 2] = (temp % 10) + '0';
+			temp /= 10;
+			id[(i * 4) + 1] = (temp % 10) + '0';
+			temp /= 10;
+			id[(i * 4)] = (temp % 10) + '0';
+		}
+		if (i < 4){
+			id[(i * 4) + 3] = '.';
+		}
+	}
 }
 
 bool displayConnectionDetails (void)
@@ -310,3 +361,4 @@ void listSSIDResults(void)
 
   cc3000.stopSSIDscan();
 }
+
