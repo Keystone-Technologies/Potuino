@@ -9,10 +9,10 @@ Additional expectations of potuino will be documented here.
 ##To Do
 - [x] Remap board pins
 - [x] Send POST request to NodeJS server
-- ~~Dynamically update Content-Length header~~ (no longer necessary)
+- [ ] Dynamically update Content-Length header for multiple IDs
 - [ ] Clean up wiring
 - [x] Convert RFID tag number from byte array 
-- [ ] Make RFID scanner loop
+- [x] Make RFID scanner loop
 - [x] Send RFID tag with POST request
 - [ ] Respond from server with JSON
 

@@ -21,8 +21,8 @@
 #include <string.h>
 #include "utility/debug.h"
 
-#define WLAN_SSID "XXXXX"             
-#define WLAN_PASS "XXXXX"
+#define WLAN_SSID "VR_EGGZY"             
+#define WLAN_PASS "12345678"
 
 #define WEBSITE   "potuinoserver-jdorpinghaus.c9users.io"   //Doesn't like an IP here
 //#define WEBSITEIP IPAddress(172,16,100,186)
@@ -111,9 +111,8 @@ void loop(void)
       }
     }
 		Serial.print("\n\r");//return character for next line
-    txInput();
-		
-		format_tag(tagData);
+    format_tag(tagData);
+		txInput();
 		
   }
 }
@@ -168,7 +167,7 @@ void txInput()
 		www.fastrprint(F("Accept: */*\r\n"));
 		www.fastrprint(F("User-Agent: Potuino\r\n"));
 		www.fastrprint(F("Accept-Encoding: gzip, deflate\r\n"));
-		www.fastrprint(F("Content-Length: 26\r\n")); //IMPORTANT
+		www.fastrprint(F("Content-Length: 30\r\n")); //IMPORTANT
 		www.fastrprint(F("Content-Type: application/json\r\n"));
     www.fastrprint(F("\r\n"));
 		www.fastrprint(F("{\"RFID\":\""));
@@ -233,23 +232,7 @@ void txInput()
     }
   }
    www.close();
-   Serial.println(F("----------------------------------------------"));
-   cc3000.disconnect();
-   Serial.println(F("\n\nDisconnecting"));
-   delay(3000);  
-}
-
-int binary_decimal(int n) /* Function to convert binary to decimal.*/
-{
-    int decimal=0, i=0, rem;
-    while (n!=0)
-    {
-        rem = n%10;
-        n/=10;
-        decimal += rem*pow(2,i);
-        ++i;
-    }
-    return decimal;
+   Serial.println(F("\n----------------------------------------------"));
 }
 
 void format_tag(byte array[]){
