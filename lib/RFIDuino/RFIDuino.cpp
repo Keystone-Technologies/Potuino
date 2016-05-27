@@ -39,16 +39,16 @@ RFIDuino::RFIDuino(float version)
     mod = 6;
     rdyClk = 4;
   }
-  //RFIDuino 1.2 (2-pin antenna, "Rev 1.2" printed version number)
+  //RFIDuino 1.2 (2-pin antenna, "Rev 1.2" printed version number) THIS IS THE POTUINO BOARD VERSION
   else if (version == 1.2)
   {
     //User Accessible Output
-    buzzer = 13;
+    buzzer = 13; //THIS LINE CORRESPONDS TO THE REMAPPED BUZZER PIN TO AVOID INTERFERENCE WITH THE WIFI SHIELD
     led1 = 8;
     led2 = 4;
   
     //RFID related pins
-    demodOut = 9;
+    demodOut = 9; //THIS CORRESPONDS TO THE REAMPPED DEMOD_OUT PIN TO AVOID INTERFERENCE WITH THE WIFI SHIELD
     shd = 7;
     mod = 6;
     rdyClk = 2;
